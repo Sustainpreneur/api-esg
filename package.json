@@ -1,0 +1,35 @@
+{
+	"name": "api-esg",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"start": "node src/app.js",
+		"dev": "nodemon src/app.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Sustainpreneur/api-esg.git"
+	},
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/Sustainpreneur/api-esg/issues"
+	},
+	"homepage": "https://github.com/Sustainpreneur/api-esg#readme",
+	"dependencies": {
+		"cors": "^2.8.5",
+		"dotenv": "^16.0.3",
+		"express": "^4.18.2",
+		"node-redshift": "^0.1.5",
+		"pg": "^8.11.0",
+		"pg-hstore": "^2.3.4",
+		"sequelize": "^6.31.1",
+		"yahoo-finance": "^0.3.8",
+		"yahoo-finance2": "^2.4.1"
+	},
+	"devDependencies": {
+		"nodemon": "^2.0.22"
+	}
+}
