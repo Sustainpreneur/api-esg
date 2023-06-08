@@ -117,7 +117,6 @@ module.exports.getYFinanceToday = async (req, res) => {
     symbol: symbol,
     from: formattedDate10DaysAgo,
     to: formattedDateToday,
-    // period: 'd'  // 'd' (daily), 'w' (weekly), 'm' (monthly), 'v' (dividends only)
   }, function (err, quotes) {
     console.log(quotes)
     res.send(quotes)
