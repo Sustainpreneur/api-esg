@@ -82,7 +82,7 @@ module.exports.getStockBySector = async (req, res) => {
 		const { sector } = req.params
 		let bindObject = {}
 		let whereQuery = ``
-		if (sector && sector != 'ALL') (whereQuery += `\n AND cmd.sector = $sector`), (bindObject['sector'] = sector)
+		if (sector && sector != 'ALL') (whereQuery += `\n WHERE cmd.sector = $sector`), (bindObject['sector'] = sector)
 		const format = { type: QueryTypes.SELECT, logging: false, bind: bindObject }
 
 		let query = `
