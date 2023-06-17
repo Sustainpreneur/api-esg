@@ -39,15 +39,52 @@ module.exports.getStock120DaysAgo = async (req, res) => {
 }
 
 module.exports.getOptionStock = async (req, res) => {
-  const { symbol } = req.params;
-  const result = await yahooFinance.quote(symbol, {fields: ["marketCap", "trailingPE", "averageDailyVolume3Month"]});
-  res.send(result);
+	const { symbol } = req.params
+	const result = await yahooFinance.quote(symbol, { fields: ['marketCap', 'trailingPE', 'averageDailyVolume3Month'] })
+	res.sen(result)
+}
+
+module.exports.getAllStock = async (req, res) => {
+	try {
+		const format = { type: QueryTypes.SELECT, logging: false, bind: {} }
+		let query = `
+			SELECT 
+				cmd.symbol,
+				cmd.company_name_en,
+				cmd.company_name_th,
+				cmd.sector,
+				cmd.setthsi,
+				cmd.setthsi_index,
+				cmd.set50 ,
+				cmd.set100,
+				(
+					SELECT coalesce(json_agg(stock), '[]'::json)
+					FROM (
+						SELECT *
+						FROM company_stock_history_transaction csht 
+						WHERE DATE(csht.date) >= CURRENT_DATE - INTERVAL '10 day'
+							AND DATE(csht.date) <= CURRENT_DATE
+							AND cmd.company_master_id = csht.company_master_id
+						ORDER BY csht.date ASC
+					) stock
+				) AS stock_array
+			FROM company_master_data cmd
+		`
+		const result = await sequelize.query(query, format)
+		res.send(result)
+	} catch (error) {
+		res.send(error)
+	}
 }
 
 module.exports.getStockBySector = async (req, res) => {
 	try {
 		const { sector } = req.params
-    const format = { type: QueryTypes.SELECT, logging: false, bind: { sector } }
+		let bindObject = {}
+		let whereQuery = ``
+		if (sector && sector != 'ALL') (whereQuery += `\n AND cmd.sector = $sector`), (bindObject['sector'] = sector)
+		const format = { type: QueryTypes.SELECT, logging: false, bind: bindObject }
+
 		let query = `
 			select 
 				cmd.symbol, 
@@ -71,11 +108,11 @@ module.exports.getStockBySector = async (req, res) => {
 						) stock
 				) as stock_array 
 			from 
-				company_master_data cmd 
-			where 
-				cmd.sector = $sector
+				company_master_data cmd ${whereQuery}
+			limit 50
 		`
-    const result = await sequelize.query(query, format)
+		const result = await sequelize.query(query, format)
+		console.log(result.length);
 		res.send(result)
 	} catch (error) {
 		res.send(error)
@@ -85,7 +122,7 @@ module.exports.getStockBySector = async (req, res) => {
 module.exports.getOptionStockYear = async (req, res) => {
 	try {
 		const { symbol } = req.params
-    const format = { type: QueryTypes.SELECT, logging: false, bind: { symbol } }
+		const format = { type: QueryTypes.SELECT, logging: false, bind: { symbol } }
 
 		let query = `
 			SELECT 
@@ -111,7 +148,7 @@ module.exports.getOptionStockYear = async (req, res) => {
 			WHERE 
 				cmd.symbol = $symbol
 		`
-    const result = await sequelize.query(query, format)
+		const result = await sequelize.query(query, format)
 		res.send(result)
 	} catch (error) {
 		res.send(error)
@@ -119,9 +156,9 @@ module.exports.getOptionStockYear = async (req, res) => {
 }
 // module.exports.getStockYearAgo = asyn (req, res) => {
 // 	try {
-		
+
 // 	} catch (error) {
-		
+
 // 	}
 // }
 
