@@ -40,8 +40,8 @@ module.exports.getStock120DaysAgo = async (req, res) => {
 
 module.exports.getOptionStock = async (req, res) => {
 	const { symbol } = req.params
-	const result = await yahooFinance.quote(symbol, { fields: ['marketCap', 'trailingPE', 'averageDailyVolume3Month'] })
-	res.sen(result)
+	const result = await yahooFinance.quote(symbol, { fields: ['marketCap', 'trailingPE', 'averageDailyVolume3Month', 'regularMarketVolume', 'fiftyTwoWeekRange'] })
+	res.send(result)
 }
 
 module.exports.getAllStock = async (req, res) => {
